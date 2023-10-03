@@ -2,47 +2,64 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../../components/Header';
+import { parsePokemons } from '../../utils/pokemonUtils';
 
 const Information = () => {
   let { id } = useParams();
   const [pokemon, setPokemon] = useState({});
+  const [selectedAbility, setSelectedAbility] = useState('');
   const [otherPokemons, setOtherPokemons] = useState([]);
 
   useEffect(() => {
     const getPokemon = async () => {
       const result = await axios(`https://pokeapi.co/api/v2/pokemon/${id}`);
       const data = result.data;
-      console.log(data);
       setPokemon(data);
     };
     getPokemon();
   }, [id]);
 
-  const getAbility = async (url) => {
+  const getAbility = async (name, url) => {
+    setSelectedAbility(name);
     const result = await axios(url);
     const data = result.data;
-    console.log(data);
-    setOtherPokemons(data.pokemon.map(pokemon => {
-      let splitUrl = pokemon.pokemon.url.split('/');
-      let id = splitUrl[splitUrl.length - 2];
-      return { id: id, name: pokemon.pokemon.name }
-    }).sort((a, b) => a.id - b.id));
+    const filteredPokemons = parsePokemons(data.pokemon).filter(pokemon => pokemon.id <= 151);
+    console.log(filteredPokemons);
+    setOtherPokemons(filteredPokemons);
   };
 
   return (
     <>
       <Header />
       <main className="container information">
-        <h1>Information</h1>
+        <h2>{`${pokemon.name?.toUpperCase()} Information`}</h2>
         <div>
-          <h2>{pokemon.name}</h2>
           <div className="img-container">
             <img src={pokemon.sprites?.front_default} alt={pokemon.name} />
           </div>
         </div>
         <div>
-          <h3>Habilities</h3>
+          <h3>Stats</h3>
           <table className="table table-dark">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Base Stat</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pokemon.stats?.map(stat => (
+                <tr key={stat.stat.name}>
+                  <td>{stat.stat.name}</td>
+                  <td>{stat.base_stat}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Habilities</h3>
+          <table className="table table-dark table-hover ability-table">
             <thead>
               <tr>
                 <th>Name</th>
@@ -54,7 +71,7 @@ const Information = () => {
                   <td
                     data-bs-toggle="modal"
                     data-bs-target="#exampleModal"
-                    onClick={() => getAbility(ability.ability.url)}>
+                    onClick={() => getAbility(ability.ability.name, ability.ability.url)}>
                       {ability.ability.name}
                   </td>
                 </tr>
@@ -70,22 +87,24 @@ const Information = () => {
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h1 className="modal-title fs-5" id="more-pokemons">Other Pokemons</h1>
+                <h1 className="modal-title fs-5" id="more-pokemons">Pokemons with '{selectedAbility.toUpperCase()}' ability</h1>
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div className="modal-body">
-                <table>
+                <table className="table table-hover">
                   <thead>
                     <tr>
+                      <th>ID</th>
                       <th>Name</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {otherPokemons?.map(pokemon => (
+                    {otherPokemons.length ? otherPokemons?.map(pokemon => (
                       <tr key={pokemon.id}>
-                        <td>{pokemon.name}</td>
+                        <td>{pokemon.id}</td>
+                        <td><a href={`/pokemon/${pokemon.id}`}>{pokemon.name}</a></td>
                       </tr>
-                    ))}
+                    )): <tr><td colSpan="2">No pokemons found</td></tr>}
                   </tbody>
                 </table>
               </div>

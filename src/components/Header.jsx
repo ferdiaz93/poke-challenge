@@ -2,7 +2,7 @@
 const Header = () => {
   return (
     <header className="header wrapper">
-      <h1>Poke-Challenge</h1>
+      <h1><a href="/">Poke-Challenge</a></h1>
     </header>
   );
 };

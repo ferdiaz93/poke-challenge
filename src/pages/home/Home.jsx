@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios';
 import Header from '../../components/Header'
+import { parsePokemons } from '../../utils/pokemonUtils';
 
 const Home = () => {
   const [pokemons, setPokemons] = useState([]);
@@ -9,11 +10,7 @@ const Home = () => {
     const getPokemons = async () => {
       const result = await axios('https://pokeapi.co/api/v2/generation/1');
       const data = result.data;
-      const pokemonsParsed = data.pokemon_species.map(pokemon => {
-        let splitUrl = pokemon.url.split('/');
-        let id = splitUrl[splitUrl.length - 2];
-        return { id: id, name: pokemon.name }
-      }).sort((a, b) => a.id - b.id);
+      const pokemonsParsed = parsePokemons(data.pokemon_species);
       setPokemons(pokemonsParsed);
     };
     getPokemons();
