@@ -1,0 +1,19 @@
+.information{
+    .img-container{
+        display: flex;
+        justify-content: center;
+        img{
+            width: 150px;
+        }
+    }
+    .ability-table{
+        tr{
+            cursor: pointer;
+        }
+    }
+    .modal{
+        h1{
+            color: black;
+        }
+    }
+}
