@@ -1,8 +1,18 @@
-# React + Vite
+# Poke-Challenge
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Instalación inicial
 
-Currently, two official plugins are available:
+Node Version: v18.17.0
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. `npm install`
+2. `npm run dev`
+3. acceder a http://localhost:5173/
+
+## Consigna
+- La aplicación debe mostrar un listado de todos los pokemons de la primera generación (del 1.
+Bulbasaur al 151. Mew)
+- Cada nombre de pokemon debe ser un link al detalle del pokemon.
+- Dentro del detalle mostrar las estadísticas del pokemon, junto con su Sprite frontal (puede ser la
+versión normal o shiny) y su habilidad.
+- El campo habilidad debe ser un hipervínculo a un listado de todos los pokemon que tengan esa
+habilidad (de la primera generación).
