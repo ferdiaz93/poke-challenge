@@ -13,7 +13,11 @@ const Home = () => {
       const pokemonsParsed = parsePokemons(data.pokemon_species);
       setPokemons(pokemonsParsed);
     };
-    getPokemons();
+    try{
+      getPokemons();
+    } catch (error) {
+      console.log(error);
+    };
   }, []);
 
   return (

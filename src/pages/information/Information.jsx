@@ -9,6 +9,7 @@ const Information = () => {
   const [pokemon, setPokemon] = useState({});
   const [selectedAbility, setSelectedAbility] = useState('');
   const [otherPokemons, setOtherPokemons] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getPokemon = async () => {
@@ -16,16 +17,26 @@ const Information = () => {
       const data = result.data;
       setPokemon(data);
     };
-    getPokemon();
+    try{
+      getPokemon();
+    } catch (error) {
+      console.log(error);
+    };
   }, [id]);
 
   const getAbility = async (name, url) => {
+    setIsLoading(true);
     setSelectedAbility(name);
-    const result = await axios(url);
-    const data = result.data;
-    const filteredPokemons = parsePokemons(data.pokemon).filter(pokemon => pokemon.id <= 151);
-    console.log(filteredPokemons);
-    setOtherPokemons(filteredPokemons);
+    try{
+      const result = await axios(url);
+      const data = result.data;
+      const filteredPokemons = parsePokemons(data.pokemon).filter(pokemon => pokemon.id <= 151);
+      setOtherPokemons(filteredPokemons);
+    } catch (error) {
+      console.log(error);
+    } finally{
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -91,22 +102,28 @@ const Information = () => {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div className="modal-body">
-                <table className="table table-hover">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Name</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {otherPokemons.length ? otherPokemons?.map(pokemon => (
-                      <tr key={pokemon.id}>
-                        <td>{pokemon.id}</td>
-                        <td><a href={`/pokemon/${pokemon.id}`}>{pokemon.name}</a></td>
+                {isLoading ?
+                  <div className="d-flex justify-content-center">
+                    <div class="spinner-border" role="status"></div>
+                  </div>
+                :
+                  <table className="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Name</th>
                       </tr>
-                    )): <tr><td colSpan="2">No pokemons found</td></tr>}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {otherPokemons.length ? otherPokemons?.map(pokemon => (
+                        <tr key={pokemon.id}>
+                          <td>{pokemon.id}</td>
+                          <td><a href={`/pokemon/${pokemon.id}`}>{pokemon.name}</a></td>
+                        </tr>
+                      )): <tr><td colSpan="2">No pokemons found</td></tr>}
+                    </tbody>
+                  </table>
+                }
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
